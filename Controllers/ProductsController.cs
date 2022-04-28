@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ using Test.Models;
 
 namespace Test.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]/[action]")]
     public class ProductController : Controller
     {
         private readonly ILogger<ProductController> _logger;
@@ -18,20 +21,26 @@ namespace Test.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        /// <summary>
+        /// Test method.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>Typical Hello string</returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        /// GET /Dummy
+        /// {
+        ///     "name": "Carles"
+        /// }
+        ///
+        /// </remarks>
+        /// <response code="200">OK</response>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult Dummy(string name)
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return Ok($"Hello {name}!");
         }
     }
 }
