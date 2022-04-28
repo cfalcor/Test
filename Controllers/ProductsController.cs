@@ -15,10 +15,15 @@ namespace Test.Controllers
     public class ProductController : Controller
     {
         private readonly ILogger<ProductController> _logger;
+        private readonly ProductManagmentContext _productManagmentContext;
+        private HttpContextAccessor _httpContextAccessor;
 
-        public ProductController(ILogger<ProductController> logger)
+        public ProductController(ILogger<ProductController> logger, ProductManagmentContext context, HttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
+            _productManagmentContext = context;
+            _httpContextAccessor = httpContextAccessor;
+        }
         }
 
         /// <summary>
