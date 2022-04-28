@@ -11,13 +11,13 @@ namespace Test.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class ProductController : Controller
+    public class ProductsController : Controller
     {
-        private readonly ILogger<ProductController> _logger;
+        private readonly ILogger<ProductsController> _logger;
         private readonly ProductManagmentContext _productManagmentContext;
-        private HttpContextAccessor _httpContextAccessor;
+        private IHttpContextAccessor _httpContextAccessor;
 
-        public ProductController(ILogger<ProductController> logger, ProductManagmentContext context, HttpContextAccessor httpContextAccessor)
+        public ProductsController(ILogger<ProductsController> logger, ProductManagmentContext context, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _productManagmentContext = context;
@@ -31,24 +31,24 @@ namespace Test.Controllers
         /// <remarks>
         /// Sample request:
         ///
-        /// GET /ListProducts
+        /// GET /List
         ///
         /// <response code="500">An error occurred listing products.</response>
 
         [HttpGet]
-        public object ListProducts()
+        public object List()
         {
             // Data to identify session and user. At this moment we only have IP
-            string IP = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            string IP = (_httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString()) ?? "N/D";
 
-            _logger.LogInformation($"[ListProducts-{IP}] Getting prodcuts...");
+            _logger.LogInformation($"[List-{IP}] Getting prodcuts...");
             var productsList = new List<Product>();
 
             try
             {
                 productsList = _productManagmentContext.Products.ToList();
                 if (productsList.Count == 0)
-                    _logger.LogDebug($"[ListProducts-{IP}] No products found.");
+                    _logger.LogDebug($"[List-{IP}] No products found.");
 
 
                 return productsList;
@@ -57,7 +57,7 @@ namespace Test.Controllers
             {
                 var error = $"An error occurred listing products: {e.Message}.";
 
-                _logger.LogError($"[ListProducts-{IP}] Unable to get products. Error: {error}");
+                _logger.LogError($"[List-{IP}] Unable to get products. Error: {error}");
 
                 return StatusCode(500, productsList);
             }
@@ -86,7 +86,7 @@ namespace Test.Controllers
         [HttpPost]
         public ActionResult Add(Product product)
         {
-            string IP = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            string IP = (_httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString()) ?? "N/D";
 
             _logger.LogInformation($"[AddProduct-{IP}] Adding product {JsonConvert.SerializeObject(product)}...");
 

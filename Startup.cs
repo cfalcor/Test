@@ -21,6 +21,7 @@ namespace Test
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddHttpContextAccessor();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "v1" });
@@ -30,6 +31,7 @@ namespace Test
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             
             services.AddDatabaseDeveloperPageExceptionFilter();
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,7 +55,6 @@ namespace Test
             app.UseRouting();
 
             app.UseAuthorization();
-            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
