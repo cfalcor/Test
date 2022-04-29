@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "New product";
+}
+
+<div class="text-center">
+    <h1 class="display-4">New product</h1>
+    <form id="form">
+        <div>
+            <label class="title">Name</label><br>
+            <input type="text" id="name" name="name"><br>
+        </div>
+        <div>
+            <label class="title">Family product</label><br>
+            <input type="text" id="familyProduct" name="familyProduct"><br>
+        </div>
+        <div>
+            <label class="title">Description</label><br>
+            <input type="text" id="description" name="description"><br>
+        </div>
+        <div>
+            <label class="title">Price</label><br>
+            <input type="number" step=".01" id="price" name="price"><br>
+        </div>
+        <div>
+            <input type="submit" id="submit" name="submit" value="Add">
+        </div>
+    </form>
+
+<div id="result"></div>
+    <script>
+
+        $("#form").on('submit', function(e){
+            e.preventDefault();
+           
+            const data = Object.fromEntries(new FormData(e.target).entries());
+            console.log(data);
+
+            var request = $.ajax({
+                url: '/api/Products/Add',
+                type : "POST",
+                contentType: 'application/json',
+                data: JSON.stringify(data) ,
+                success : function(result) {
+                    console.log(result);
+                },
+                
+                error: function() {
+                  alert('An error occurred');
+                },
+              
+                success: function () {
+                  alert('Product added successfully.');
+                  resetForm();
+                }
+            })
+        });
+
+        function resetForm() {
+            document.getElementById("form").reset();
+        }
+    </script>
+</div>

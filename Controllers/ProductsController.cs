@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Test.Models;
@@ -15,7 +14,9 @@ namespace Test.Controllers
     {
         private readonly ILogger<ProductsController> _logger;
         private readonly ProductManagmentContext _productManagmentContext;
-        private IHttpContextAccessor _httpContextAccessor;
+
+        // Data to identify session and user. At this moment we only have IP. 
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public ProductsController(ILogger<ProductsController> logger, ProductManagmentContext context, IHttpContextAccessor httpContextAccessor)
         {
@@ -25,9 +26,9 @@ namespace Test.Controllers
         }
 
         /// <summary>
-        /// Get all existing products
+        /// Get all existing products.
         /// </summary>
-        /// <returns>List of Product</returns>
+        /// <returns>List of existing Products. Empty list if there are none.</returns>
         /// <remarks>
         /// Sample request:
         ///
@@ -38,10 +39,10 @@ namespace Test.Controllers
         [HttpGet]
         public object List()
         {
-            // Data to identify session and user. At this moment we only have IP
             string IP = (_httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString()) ?? "N/D";
 
-            _logger.LogInformation($"[List-{IP}] Getting prodcuts...");
+            _logger.LogInformation($"[List-{IP}] Getting products...");
+
             var productsList = new List<Product>();
 
             try
@@ -49,7 +50,6 @@ namespace Test.Controllers
                 productsList = _productManagmentContext.Products.ToList();
                 if (productsList.Count == 0)
                     _logger.LogDebug($"[List-{IP}] No products found.");
-
 
                 return productsList;
             }
@@ -64,15 +64,16 @@ namespace Test.Controllers
         }
 
         /// <summary>
-        /// Adds new Product
+        /// Adds new Product.
         /// </summary>
         /// <param name="product"></param>
         /// <returns>ActionResult</returns>
         /// <remarks>
         /// Sample request:
         ///
-        /// POST /AddProduct
+        /// POST /Add
         ///{
+        ///   "id": "id",
         ///   "name": "string",
         ///   "description": "string",
         ///   "price": 0.00,
@@ -80,23 +81,27 @@ namespace Test.Controllers
         /// },
         ///
         /// </remarks>
-        /// <response code="200">OK if product added. </response>
-        /// <response code="400">OK if product is not valid. </response>
-        /// <response code="500">OK if error occurred adding product. </response>
+        /// <response code="200">Product added.</response>
+        /// <response code="400">Product is not valid.</response>
+        /// <response code="500">An error occurred adding product.</response>
         [HttpPost]
         public ActionResult Add(Product product)
         {
-            string IP = (_httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString()) ?? "N/D";
+            string IP = (_httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString()) ?? "N/D";
 
-            _logger.LogInformation($"[AddProduct-{IP}] Adding product {JsonConvert.SerializeObject(product)}...");
+            _logger.LogInformation($"[Add-{IP}] Adding product {JsonConvert.SerializeObject(product)}...");
 
-            // Forcing id to 0 because we don't know what we have. To ensure integrity.
+            // Forcing id to 0 because we don't know what value comes. To ensure integrity on database and avoid duplicate key errors on insert.
             product.Id = 0;
 
-            // Model validation to ensure the integrity of the object. In porducts as DevExpress we can use decarators to do this task automaically.
+            // Model validation to ensure the integrity of the object. In products as DevExpress we can use decorators to do this task automatically.
             var (valid, message) = product.IsValid();
             if (!valid)
+            {
+                _logger.LogInformation($"[Add-{IP}] Product not valid to add. Product: {JsonConvert.SerializeObject(product)} Error: {message}");
+
                 return StatusCode(400, message);
+            }
 
             _productManagmentContext.Add(product);
 
@@ -108,7 +113,7 @@ namespace Test.Controllers
             {
                 var error = $"An error occurred adding product: {e.Message}.";
 
-                _logger.LogError($"[AddProduct-{IP}] {JsonConvert.SerializeObject(product)} Error: {error}");
+                _logger.LogError($"[Add-{IP}] {JsonConvert.SerializeObject(product)} Error: {error}");
 
                 return StatusCode(500, error);
             }

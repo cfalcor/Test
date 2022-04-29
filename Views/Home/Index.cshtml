@@ -1,8 +1,28 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Products";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div>
+    <h1 class="display-4">Products</h1>
+    <a id="addProductButton" type="button" style="margin: 5px;" href="/Home/AddProduct">Add product</a>
+    <table id="grid"></table>
+
+    <script>
+        $( document ).ready(function() {
+            $(function () {
+                "use strict";
+                $("#grid").jqGrid({
+                    url: "/api/Products/List",
+                    datatype: "json",
+                    colModel: [
+                        { name: "id" },
+                        { name: "name" },
+                        { name: "familyProduct" },
+                        { name: "description" },
+                        { name: "price" },
+                    ]
+                });
+            });
+        }); 
+    </script>
 </div>
