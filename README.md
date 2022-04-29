@@ -2,17 +2,17 @@
 
 Proyecto ASP.NET Core Web App MVC en .NET 5 con Enity Framework 5.0. Se ha usado IDE VS22.
 
-Dada la facilidad de uso del ejecutbale de .NET Core se ignora la ejecuiÛn del IIS express y se usa como stand alone.
-Al ejecutar la aplicaciÛn pedir· la instalaciÛn de los certificados. Aceptamos.
+Dada la facilidad de uso del ejecutbale de .NET Core se ignora la ejecui√≥n del IIS express y se usa como stand alone.
+Al ejecutar la aplicaci√≥n pedir√° la instalaci√≥n de los certificados. Aceptamos.
 
-El proyecto necesita de una conexiÛn a una BD SQL Express "Model". Esta BD necesita la tabla "Products".
+El proyecto necesita de una conexi√≥n a una BD SQL Express "Model". Esta BD necesita la tabla "Products".
 Se adjunta al proyecto una copia de la BD.
-Cadena de conexiÛn para la BD: "Server=localhost\SQLEXPRESS;Database=model;Trusted_Connection=True;"
-No se usa autentificaciÛn ya que no es necesaria para este test.
+Cadena de conexi√≥n para la BD: "Server=localhost\SQLEXPRESS;Database=model;Trusted_Connection=True;"
+No se usa autentificaci√≥n ya que no es necesaria para este test.
 
 Script para la tabla "Products", por si no se quiere restaurar la copia de BD:
 
-''''
+```SQL
 	CREATE TABLE [dbo].[Products](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[name] [varchar](255) NOT NULL,
@@ -25,10 +25,10 @@ Script para la tabla "Products", por si no se quiere restaurar la copia de BD:
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 	GO
-''''
+```
 
-SWAGGER
+## SWAGGER
 Este proyecto contiene Swagger. Para viusalizarlo acceder a la url "https://localhost:5001/swagger".
 
-UNIT TEST
-Este proyecto contiene Unit Test. Se ha usado NUnit para la ejeccuciÛn de los test. Estos se encuentran en otro proyecto (UnitTest) dentro de la misma soluciÛn. 
+## UNIT TEST
+Este proyecto contiene Unit Test. Se ha usado NUnit para la ejeccuci√≥n de los test. Estos se encuentran en otro proyecto (UnitTest) dentro de la misma soluci√≥n. 
